@@ -9,7 +9,7 @@ For this server I will use 3 servers which I configure according my home network
 
 
 ### Setting the Server
-first, let's set the ip and hostname of the servers first
+first, let's set the ip and hostname of the servers first. Do this to all servers.
 login as super user:
 ```sh
 $ sudo su
@@ -45,7 +45,17 @@ network:
 ```sh
 $ netplan apply
 ```
+disable swap:
+```sh
+$ swapoff -a; sed -i '/swap/d' /etc/fstab
+```
+disable firewall:
+```sh
+$ ufw disable
+```
 reboot server to apply the settings
 ```sh
 $ reboot now
 ```
+### Setting the Server
+
