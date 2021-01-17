@@ -8,7 +8,7 @@ For this server I will use 3 servers which I configure according my home network
 | 192.168.100.43 | Worker 2 |
 
 
-### Setting Server
+### Setting the Server
 first, let's set the ip and hostname of the servers first
 login as super user:
 ```sh
@@ -43,5 +43,9 @@ network:
   version: 2
 ```
 ```sh
-$ nano /etc/netplan/00-installer-config.yaml
+$ netplan apply
+```
+reboot server to apply the settings
+```sh
+$ reboot now
 ```
