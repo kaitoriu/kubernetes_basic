@@ -28,7 +28,7 @@ worker1
 ```
 then let's change the IP, adjust IP according to the servers list above:
 ```sh
-$ nano /etc/netplan/00-installer-config.yaml
+nano /etc/netplan/00-installer-config.yaml
 ```
 ```sh
 network:
@@ -80,5 +80,24 @@ EOF
 # Apply sysctl params without reboot
 sudo sysctl --system
 ```
+Install containerd:
+```sh
+# (Install containerd)
+sudo apt-get update && sudo apt-get install -y containerd
 
+# Configure containerd
+sudo mkdir -p /etc/containerd
+sudo containerd config default | sudo tee /etc/containerd/config.toml
 
+# Restart containerd
+sudo systemctl restart containerd
+```
+use systemd for cgroup driver:
+```sh
+nano /etc/containerd/config.toml
+
+[plugins."io.containerd.grpc.v1.cri".containerd.runtimes.runc]
+  ...
+  [plugins."io.containerd.grpc.v1.cri".containerd.runtimes.runc.options]
+    SystemdCgroup = true
+```
