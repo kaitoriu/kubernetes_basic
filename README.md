@@ -12,11 +12,11 @@ For this server I will use 3 servers which I configure according my home network
 first, let's set the ip and hostname of the servers first. Do this to all servers.
 login as super user:
 ```sh
-$ sudo su
+sudo su
 ```
 change the hostname:
 ```sh
-$ nano /etc/hostname
+nano /etc/hostname
 ```
 For Server Master change the name to master 
 ```sh
@@ -43,19 +43,42 @@ network:
   version: 2
 ```
 ```sh
-$ netplan apply
+netplan apply
 ```
 disable swap:
 ```sh
-$ swapoff -a; sed -i '/swap/d' /etc/fstab
+swapoff -a; sed -i '/swap/d' /etc/fstab
 ```
 disable firewall:
 ```sh
-$ ufw disable
+ufw disable
 ```
 reboot server to apply the settings
 ```sh
-$ reboot now
+reboot now
 ```
-### Setting the Server
+### Install container runtime
+Do this on all servers
+
+Install and configure prerequisites:
+```sh
+cat <<EOF | sudo tee /etc/modules-load.d/containerd.conf
+overlay
+br_netfilter
+EOF
+
+sudo modprobe overlay
+sudo modprobe br_netfilter
+
+# Setup required sysctl params, these persist across reboots.
+cat <<EOF | sudo tee /etc/sysctl.d/99-kubernetes-cri.conf
+net.bridge.bridge-nf-call-iptables  = 1
+net.ipv4.ip_forward                 = 1
+net.bridge.bridge-nf-call-ip6tables = 1
+EOF
+
+# Apply sysctl params without reboot
+sudo sysctl --system
+```
+
 
