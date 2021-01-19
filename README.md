@@ -1,4 +1,4 @@
-### kubernetes_basic
+### Introduction
 Tutorial how to create basic cluster kubenetes on Ubuntu Server 20.04.
 For this server I will use 3 servers which I configure according my home network:
 | IP | Role |
@@ -10,7 +10,8 @@ For this server I will use 3 servers which I configure according my home network
 
 ### Setting the Server
 first, let's set the ip and hostname of the servers first. Do this to all servers.
-login as super user:
+
+Login as super user:
 ```sh
 sudo su
 ```
@@ -100,3 +101,4 @@ nano /etc/containerd/config.toml
   [plugins."io.containerd.grpc.v1.cri".containerd.runtimes.runc.options]
     SystemdCgroup = true
 ```
+### Install kubeadm, kubelet, kubectl
