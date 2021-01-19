@@ -16,21 +16,21 @@ sudo su
 ```
 change the hostname:
 ```sh
+#edit hostname
 nano /etc/hostname
-```
-For Server Master change the name to master 
-```sh
+
+#For Server Master change the name to master 
 master
-```
-For Server Worker change to worker[number]:
-```sh
+
+#For Server Worker change to worker[number]:
 worker1
 ```
 then let's change the IP, adjust IP according to the servers list above:
 ```sh
+#edit configuration
 nano /etc/netplan/00-installer-config.yaml
-```
-```sh
+
+#configuration content
 network:
   ethernets:
     enp0s3:
@@ -41,20 +41,19 @@ network:
         addresses:
         - 8.8.8.8
   version: 2
-```
-```sh
+
+#apply the configuration
 netplan apply
 ```
-disable swap:
+disable swap and firewall:
 ```sh
+#disable swap
 swapoff -a; sed -i '/swap/d' /etc/fstab
-```
-disable firewall:
-```sh
+
+#disable firewall
 ufw disable
-```
-reboot server to apply the settings
-```sh
+
+#reboot server to apply the settings
 reboot now
 ```
 ### Install container runtime
