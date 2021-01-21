@@ -100,6 +100,8 @@ nano /etc/containerd/config.toml
   ...
   [plugins."io.containerd.grpc.v1.cri".containerd.runtimes.runc.options]
     SystemdCgroup = true
+# Restart containerd
+sudo systemctl restart containerd
 ```
 ### Install kubeadm, kubelet, kubectl
 add repository:
