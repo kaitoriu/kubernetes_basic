@@ -111,3 +111,11 @@ install kubeadm, kubelet, kubectl:
 ```sh
 apt update && apt install -y kubeadm kubelet kubectl
 ```
+### Initialize master (On master node)
+run this command just on master node:
+```sh
+# Configure pod-network-cidr with ip according to the network pod plugin you use
+# Input apiserver-advertise-address with master ip address
+kubeadm init --pod-network-cidr=10.244.0.0/16 --apiserver-advertise-address=192.168.100.41
+```
+
