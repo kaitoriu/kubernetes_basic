@@ -137,10 +137,25 @@ mkdir -p $HOME/.kube
 sudo cp -i /etc/kubernetes/admin.conf $HOME/.kube/config
 sudo chown $(id -u):$(id -g) $HOME/.kube/config
 ```
-
-### Join workers node (On workers node)
-run the command which generated from master node on each workers node:
+### Join worker node (On worker nodes)
+run the command which generated from master node on each worker nodes:
 ```sh
 kubeadm join 192.168.100.41:6443 --token xfosll.7q1hfhh4wjjrsmoa \
     --discovery-token-ca-cert-hash sha256:0ae573f871a3704ba882cb13e453a1596a768ed873c8c62250f6cde890a58b63   
+```
+### Install CNI component (On master node)
+for connecting all nodes I use calico CNI component, so run this command on master node
+```sh
+kubectl apply -f https://docs.projectcalico.org/v3.17/manifests/calico.yaml
+```
+### Check nodes
+after few seconds check is all nodes is ready with this command 
+```sh
+kubectl get nodes
+
+# If all nodes is ready that command will show
+NAME      STATUS   ROLES                  AGE   VERSION
+master    Ready    control-plane,master   26m   v1.20.2
+worker1   Ready    <none>                 14m   v1.20.2
+worker2   Ready    <none>                 14m   v1.20.2
 ```
