@@ -92,17 +92,6 @@ sudo containerd config default | sudo tee /etc/containerd/config.toml
 # Restart containerd
 sudo systemctl restart containerd
 ```
-use systemd for cgroup driver:
-```sh
-nano /etc/containerd/config.toml
-
-[plugins."io.containerd.grpc.v1.cri".containerd.runtimes.runc]
-  ...
-  [plugins."io.containerd.grpc.v1.cri".containerd.runtimes.runc.options]
-    SystemdCgroup = true
-# Restart containerd
-sudo systemctl restart containerd
-```
 ### Install kubeadm, kubelet, kubectl
 add repository:
 ```sh
@@ -119,5 +108,39 @@ run this command just on master node:
 # Configure pod-network-cidr with ip according to the network pod plugin you use
 # Input apiserver-advertise-address with master ip address
 kubeadm init --pod-network-cidr=10.244.0.0/16 --apiserver-advertise-address=192.168.100.41
+
+# After Success 
+Your Kubernetes control-plane has initialized successfully!
+
+To start using your cluster, you need to run the following as a regular user:
+
+  mkdir -p $HOME/.kube
+  sudo cp -i /etc/kubernetes/admin.conf $HOME/.kube/config
+  sudo chown $(id -u):$(id -g) $HOME/.kube/config
+
+Alternatively, if you are the root user, you can run:
+
+  export KUBECONFIG=/etc/kubernetes/admin.conf
+
+You should now deploy a pod network to the cluster.
+Run "kubectl apply -f [podnetwork].yaml" with one of the options listed at:
+  https://kubernetes.io/docs/concepts/cluster-administration/addons/
+
+Then you can join any number of worker nodes by running the following on each as root:
+
+kubeadm join 192.168.100.41:6443 --token xfosll.7q1hfhh4wjjrsmoa \
+    --discovery-token-ca-cert-hash sha256:0ae573f871a3704ba882cb13e453a1596a768ed873c8c62250f6cde890a58b63   
+```
+```sh
+# Run the command on master node as instructed 
+mkdir -p $HOME/.kube
+sudo cp -i /etc/kubernetes/admin.conf $HOME/.kube/config
+sudo chown $(id -u):$(id -g) $HOME/.kube/config
 ```
 
+### Join workers node (On workers node)
+run the command which generated from master node on each workers node:
+```sh
+kubeadm join 192.168.100.41:6443 --token xfosll.7q1hfhh4wjjrsmoa \
+    --discovery-token-ca-cert-hash sha256:0ae573f871a3704ba882cb13e453a1596a768ed873c8c62250f6cde890a58b63   
+```
