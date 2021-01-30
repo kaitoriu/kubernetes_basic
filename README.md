@@ -6,6 +6,7 @@ Dalam tutorial ini saya menggunakan 3 buah server dengan IP sebagai berikut:
 | 192.168.100.41 | Master |
 | 192.168.100.42 | Worker 1 |
 | 192.168.100.43 | Worker 2 |
+
 Untuk IP ini sudah saya sesuaikan dengan pengaturan network internet rumah saya. jadi untuk teman-teman silahkan sesuaikan dengan pengaturan internet rumah atau kantor teman-teman sendiri.
 
 ### Setting Server (semua node)
