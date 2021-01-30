@@ -1,37 +1,38 @@
 ### Introduction
-Tutorial how to create basic cluster kubenetes on Ubuntu Server 20.04.
-For this server I will use 3 servers which I configure according my home network:
+Ini adalah tutorial untuk membuat cluster kubernetes dasar di Ubuntu Server 20.04.
+Dalam tutorial ini saya menggunakan 3 buah server dengan IP sebagai berikut:
 | IP | Role |
 | ------ | ------ |
 | 192.168.100.41 | Master |
 | 192.168.100.42 | Worker 1 |
 | 192.168.100.43 | Worker 2 |
+Untuk IP ini sudah saya sesuaikan dengan pengaturan network internet rumah saya. jadi untuk teman-teman silahkan sesuaikan dengan pengaturan internet rumah atau kantor teman-teman sendiri.
 
+### Setting Server
+Pertama bagi yang belum tahu mari kita melakukan pengaturan dasar dulu untuk server kita. 
+Kita akan melakukan pengaturan hostname dan IP server-server kita.
 
-### Setting the Server
-first, let's set the ip and hostname of the servers first. Do this to all servers.
-
-Login as super user:
+Untuk mempermudah login sebagai super user dahulu:
 ```sh
 sudo su
 ```
-change the hostname:
+ubah hostname:
 ```sh
 #edit hostname
 nano /etc/hostname
 
-#For Server Master change the name to master 
+# Untuk Server Master ubah nama hostname menjadi master 
 master
 
-#For Server Worker change to worker[number]:
+# Untuk Server Master ubah nama hostname menjadi worker[nomor]:
 worker1
 ```
-then let's change the IP, adjust IP according to the servers list above:
+Lalu mari kita sesuaikan IP server kita sesuai daftar di atas:
 ```sh
 #edit configuration
 nano /etc/netplan/00-installer-config.yaml
 
-#configuration content
+#ubah isi sesuai pengaturan IP
 network:
   ethernets:
     enp0s3:
@@ -43,10 +44,10 @@ network:
         - 8.8.8.8
   version: 2
 
-#apply the configuration
+#apply pengaturan
 netplan apply
 ```
-disable swap and firewall:
+disable swap and firewall untuk kubernetes:
 ```sh
 #disable swap
 swapoff -a; sed -i '/swap/d' /etc/fstab
@@ -54,13 +55,12 @@ swapoff -a; sed -i '/swap/d' /etc/fstab
 #disable firewall
 ufw disable
 
-#reboot server to apply the settings
+#reboot server untuk apply pengaturan
 reboot now
 ```
 ### Install container runtime
-Do this on all servers
 
-Install and configure prerequisites:
+Install dan atur prasyarat container runtime:
 ```sh
 cat <<EOF | sudo tee /etc/modules-load.d/containerd.conf
 overlay
@@ -93,7 +93,7 @@ sudo containerd config default | sudo tee /etc/containerd/config.toml
 sudo systemctl restart containerd
 ```
 ### Install kubeadm, kubelet, kubectl
-add repository:
+tambah repository:
 ```sh
 curl -s https://packages.cloud.google.com/apt/doc/apt-key.gpg | apt-key add -
 echo "deb https://apt.kubernetes.io/ kubernetes-xenial main" > /etc/apt/sources.list.d/kubernetes.list
@@ -102,14 +102,14 @@ install kubeadm, kubelet, kubectl:
 ```sh
 apt update && apt install -y kubeadm kubelet kubectl
 ```
-### Initialize master (On master node)
-run this command just on master node:
+### Initialize master 
+run perintah ini hanya di master node:
 ```sh
-# Configure pod-network-cidr with ip according to the network pod plugin you use
-# Input apiserver-advertise-address with master ip address
+# Atur pod-network-cidr berdasarkan CNI component yang digunakan
+# Atur apiserver-advertise-address sesuai master ip address
 kubeadm init --pod-network-cidr=10.244.0.0/16 --apiserver-advertise-address=192.168.100.41
 
-# After Success 
+# Setelah berhasil akan muncul tulisan 
 Your Kubernetes control-plane has initialized successfully!
 
 To start using your cluster, you need to run the following as a regular user:
@@ -132,24 +132,24 @@ kubeadm join 192.168.100.41:6443 --token xfosll.7q1hfhh4wjjrsmoa \
     --discovery-token-ca-cert-hash sha256:0ae573f871a3704ba882cb13e453a1596a768ed873c8c62250f6cde890a58b63   
 ```
 ```sh
-# Run the command on master node as instructed 
+# Jalankan perintah pada master node sesuai instruksi 
 mkdir -p $HOME/.kube
 sudo cp -i /etc/kubernetes/admin.conf $HOME/.kube/config
 sudo chown $(id -u):$(id -g) $HOME/.kube/config
 ```
-### Join worker node (On worker nodes)
-run the command which generated from master node on each worker nodes:
+### Join worker node (worker nodes)
+Jalankan perintah yang digenerate oleh master node pada setiap worker node:
 ```sh
 kubeadm join 192.168.100.41:6443 --token xfosll.7q1hfhh4wjjrsmoa \
     --discovery-token-ca-cert-hash sha256:0ae573f871a3704ba882cb13e453a1596a768ed873c8c62250f6cde890a58b63   
 ```
 ### Install CNI component (On master node)
-for connecting all nodes I use calico CNI component, so run this command on master node
+Untuk menghubungkan semua node maka install CNI Component pada master node. Dalam tutorial ini saya menggunakan calico
 ```sh
 kubectl apply -f https://docs.projectcalico.org/v3.17/manifests/calico.yaml
 ```
 ### Check nodes
-after few seconds check is all nodes is ready with this command 
+Setelah beberapa detik silahkan periksa apakah node-node sudah terhubung dengan perintah di bawah: 
 ```sh
 kubectl get nodes
 
