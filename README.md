@@ -11,13 +11,14 @@ Untuk IP ini sudah saya sesuaikan dengan pengaturan network internet rumah saya.
 
 ### Setting Server (semua node)
 Pertama bagi yang belum tahu mari kita melakukan pengaturan dasar dulu untuk server kita. 
-Kita akan melakukan pengaturan hostname dan IP server-server kita.
+untuk melakukan pengaturan silahkan lihat tutorial saya di [sini](https://github.com/kaitoriu/basic_server_configuration) 
+Kubernetes mengharuskan untuk mematikan swap di server kita, untuk melakukannya silahkan ikuti petunjuk berikut.
 
 Untuk mempermudah login sebagai super user dahulu:
 ```sh
 sudo su
 ```
-ubah hostname:
+untuk memudahkan dalam mengenali server maka ubah hostname sesuai nama node:
 ```sh
 #edit hostname
 nano /etc/hostname
@@ -28,26 +29,6 @@ master
 # Untuk Server Master ubah nama hostname menjadi worker[nomor]:
 worker1
 ```
-Lalu mari kita sesuaikan IP server kita sesuai daftar di atas:
-```sh
-#edit configuration
-nano /etc/netplan/00-installer-config.yaml
-
-#ubah isi sesuai pengaturan IP
-network:
-  ethernets:
-    enp0s3:
-      addresses:
-      - 192.168.100.41/24
-      gateway4: 192.168.100.1
-      nameservers:
-        addresses:
-        - 8.8.8.8
-  version: 2
-
-#apply pengaturan
-netplan apply
-```
 disable swap and firewall untuk kubernetes:
 ```sh
 #disable swap
@@ -55,9 +36,6 @@ swapoff -a; sed -i '/swap/d' /etc/fstab
 
 #disable firewall
 ufw disable
-
-#reboot server untuk apply pengaturan
-reboot now
 ```
 ### Install container runtime (semua node)
 
