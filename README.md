@@ -8,7 +8,7 @@ Dalam tutorial ini saya menggunakan 3 buah server dengan IP sebagai berikut:
 | 192.168.100.43 | Worker 2 |
 Untuk IP ini sudah saya sesuaikan dengan pengaturan network internet rumah saya. jadi untuk teman-teman silahkan sesuaikan dengan pengaturan internet rumah atau kantor teman-teman sendiri.
 
-### Setting Server
+### Setting Server (semua node)
 Pertama bagi yang belum tahu mari kita melakukan pengaturan dasar dulu untuk server kita. 
 Kita akan melakukan pengaturan hostname dan IP server-server kita.
 
@@ -58,7 +58,7 @@ ufw disable
 #reboot server untuk apply pengaturan
 reboot now
 ```
-### Install container runtime
+### Install container runtime (semua node)
 
 Install dan atur prasyarat container runtime:
 ```sh
@@ -92,7 +92,7 @@ sudo containerd config default | sudo tee /etc/containerd/config.toml
 # Restart containerd
 sudo systemctl restart containerd
 ```
-### Install kubeadm, kubelet, kubectl
+### Install kubeadm, kubelet, kubectl (semua node)
 tambah repository:
 ```sh
 curl -s https://packages.cloud.google.com/apt/doc/apt-key.gpg | apt-key add -
@@ -102,7 +102,7 @@ install kubeadm, kubelet, kubectl:
 ```sh
 apt update && apt install -y kubeadm kubelet kubectl
 ```
-### Initialize master 
+### Initialize master (master node)
 run perintah ini hanya di master node:
 ```sh
 # Atur pod-network-cidr berdasarkan CNI component yang digunakan
@@ -137,18 +137,18 @@ mkdir -p $HOME/.kube
 sudo cp -i /etc/kubernetes/admin.conf $HOME/.kube/config
 sudo chown $(id -u):$(id -g) $HOME/.kube/config
 ```
-### Join worker node (worker nodes)
+### Join worker node (worker node)
 Jalankan perintah yang digenerate oleh master node pada setiap worker node:
 ```sh
 kubeadm join 192.168.100.41:6443 --token xfosll.7q1hfhh4wjjrsmoa \
     --discovery-token-ca-cert-hash sha256:0ae573f871a3704ba882cb13e453a1596a768ed873c8c62250f6cde890a58b63   
 ```
-### Install CNI component (On master node)
+### Install CNI component (master node)
 Untuk menghubungkan semua node maka install CNI Component pada master node. Dalam tutorial ini saya menggunakan calico
 ```sh
 kubectl apply -f https://docs.projectcalico.org/v3.17/manifests/calico.yaml
 ```
-### Check nodes
+### Check nodes (master node)
 Setelah beberapa detik silahkan periksa apakah node-node sudah terhubung dengan perintah di bawah: 
 ```sh
 kubectl get nodes
